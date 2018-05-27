@@ -1,0 +1,28 @@
+#!/bin/bash
+
+if [ $# -lt 4 ];
+then
+        echo "Aufruf $0 <ServerName> <ClientName> <Subnetz> <Netzmaske>"
+        exit 1
+fi
+
+SrvName=$1
+ClientName=$2
+ClientSubNet=$3
+ClientSubNetMask=$4
+
+CfgBase=/root/vpn_cfg
+ServerCfgBase=$CfgBase/$SrvName
+ServerKeysDir=$ServerCfgBase/keys
+ServerCfgFile=$ServerCfgBase/$ServerName.conf
+ClientCfgDir=$ServerCfgBase/ccd
+ServerCfgVars=$ServerCfgBase/vars
+
+echo "$ClientSubNet $ClientSubNetMask" > $ServerCfgBase/$ClientName.route
+
+/root/vpn_admin/make_server_cfg $SrvName
+
+echo "iroute $ClientSubNet $ClientSubNetMask" > $ClientCfgDir/$ClientName
+
+rm -f /etc/openvpn/ccd/$SrvName/*
+cp $ClientCfgDir/* /etc/openvpn/ccd/$SrvName/

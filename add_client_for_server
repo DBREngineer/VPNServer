@@ -1,0 +1,30 @@
+#!/bin/bash
+
+if [ $# -lt 2 ];
+then
+        echo "Aufruf $0 <ServerName> <ClientName>"
+        exit 1
+fi
+
+SrvName=$1
+ClientName=$2
+
+CfgBase=/root/vpn_cfg
+ServerCfgBase=$CfgBase/$SrvName
+ServerKeysDir=$ServerCfgBase/keys
+ServerCfgFile=$ServerCfgBase/$ServerName.conf
+ClientCfgDir=$ServerCfgBase/ccd
+ServerCfgVars=$ServerCfgBase/vars
+
+cd /etc/openvpn/easy-rsa/
+source /etc/openvpn/easy-rsa/vars
+
+export KEY_DIR="$ServerKeysDir"
+
+export
+
+export EASY_RSA="${EASY_RSA:-.}"
+
+#./build_key $ClientName
+"$EASY_RSA/pkitool" $ClientName
+

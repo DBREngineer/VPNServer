@@ -1,0 +1,55 @@
+#!/bin/bash
+
+if [ $# -lt 1 ];
+then
+        echo "Aufruf $0 <ServerName>"
+        exit 1
+fi
+
+SrvName=$1
+
+CfgBase=/root/vpn_cfg
+ServerCfgBase=$CfgBase/$SrvName
+ServerKeysDir=$ServerCfgBase/keys
+ServerCfgFile=$ServerCfgBase/$SrvName.conf
+ClientCfgDir=$ServerCfgBase/ccd
+ServerCfgVars=$ServerCfgBase/vars
+
+source $ServerCfgVars
+
+export
+
+# VPN-Config für Server schreiben
+echo "port $UdpPort" > $ServerCfgFile
+echo "proto udp" >> $ServerCfgFile
+
+echo "dev tun" >> $ServerCfgFile
+echo "ca   $ServerKeysDir/ca.crt" >> $ServerCfgFile
+echo "cert $ServerKeysDir/$CommonName.crt" >> $ServerCfgFile
+echo "key  $ServerKeysDir/$CommonName.key" >> $ServerCfgFile
+echo "dh   $ServerKeysDir/dh2048.pem" >> $ServerCfgFile
+echo "server $VPNNetz $NetzMaske" >> $ServerCfgFile
+echo "ifconfig-pool-persist ipp-$SrvName.txt" >> $ServerCfgFile
+echo "client-config-dir /etc/openvpn/ccd/$SrvName" >> $ServerCfgFile
+echo "client-to-client" >> $ServerCfgFile
+echo "keepalive 10 120" >> $ServerCfgFile
+echo "cipher AES-256-CBC" >> $ServerCfgFile
+echo "user nobody" >> $ServerCfgFile
+echo "group nogroup" >> $ServerCfgFile
+echo "persist-key" >> $ServerCfgFile
+echo "persist-tun" >> $ServerCfgFile
+echo "status $ServerCfgBase/openvpn-status.log" >> $ServerCfgFile
+echo "verb 3" >> $ServerCfgFile
+echo "explicit-exit-notify 1" >> $ServerCfgFile
+echo "log /var/log/openvpn-$SrvName.log" >> $ServerCfgFile
+echo "topology subnet" >> $ServerCfgFile
+
+echo "" > $ClientCfgDir/DEFAULT
+for ROUTE in `cd $ServerCfgBase; ls *.route 2> /dev/null`; do
+#  echo "$ROUTE"
+  rr=`cat $ServerCfgBase/$ROUTE`
+  echo "push \"route $rr\"" >> $ClientCfgDir/DEFAULT
+done
+
+cp $ServerCfgFile /etc/openvpn
+

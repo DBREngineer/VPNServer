@@ -1,0 +1,44 @@
+#!/bin/bash
+
+if [ $# -lt 2 ];
+then
+        echo "Aufruf $0 <ServerName> <ClientName>"
+        exit 1
+fi
+
+SrvName=$1
+ClientName=$2
+
+CfgBase=/root/vpn_cfg
+ServerCfgBase=$CfgBase/$SrvName
+ServerKeysDir=$ServerCfgBase/keys
+ServerCfgFile=$ServerCfgBase/$ServerName.conf
+ClientCfgDir=$ServerCfgBase/ccd
+ServerCfgVars=$ServerCfgBase/vars
+
+mkdir $ServerCfgBase/ClientConfigs
+ClientCfgFile=$ServerCfgBase/ClientConfigs/$ClientName.ovpn
+
+source $ServerCfgVars
+
+export
+
+#VPN-Config für Client erstellen
+echo "client" > $ClientCfgFile
+echo "dev tun" >> $ClientCfgFile
+echo "proto udp" >> $ClientCfgFile
+echo "remote $CommonName $UdpPort" >> $ClientCfgFile
+echo "cipher AES-256-CBC" >> $ClientCfgFile
+echo "verb 3" >> $ClientCfgFile
+echo "log /var/log/openvpn-$ClientName.log" >> $ClientCfgFile
+echo "topology subnet" >> $ClientCfgFile
+echo "<ca>" >> $ClientCfgFile
+cat  $ServerKeysDir/ca.crt >> $ClientCfgFile
+echo "</ca>" >> $ClientCfgFile
+echo "<cert>" >> $ClientCfgFile
+cat  $ServerKeysDir/$ClientName.crt >> $ClientCfgFile
+echo "</cert>" >> $ClientCfgFile
+echo "<key>" >> $ClientCfgFile
+cat  $ServerKeysDir/$ClientName.key >> $ClientCfgFile
+echo "</key>" >> $ClientCfgFile
+

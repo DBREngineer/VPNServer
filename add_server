@@ -1,0 +1,53 @@
+#!/bin/bash
+
+if [ $# -lt 5 ];
+then
+	echo "Aufruf $0 <ServerName> <CommonName> <udp-port> <vpn-netz> <netzmaske>"
+	exit 1
+fi
+
+SrvName=$1
+CommonName=$2
+UdpPort=$3
+VPNNetz=$4
+NetzMaske=$5
+
+CfgBase=/root/vpn_cfg
+ServerCfgBase=$CfgBase/$SrvName
+ServerKeysDir=$ServerCfgBase/keys
+ServerCfgFile=$ServerCfgBase/$ServerName.conf
+ClientCfgDir=$ServerCfgBase/ccd
+ServerCfgVars=$ServerCfgBase/vars
+
+mkdir $ServerCfgBase
+mkdir $ServerKeysDir
+mkdir $ClientCfgDir
+mkdir /etc/openvpn/ccd/$SrvName
+
+cd /etc/openvpn/easy-rsa/
+source /etc/openvpn/easy-rsa/vars
+
+export KEY_DIR="$ServerKeysDir"
+
+export
+
+./clean-all
+
+
+export EASY_RSA="${EASY_RSA:-.}"
+
+./build-ca --batch
+"$EASY_RSA/pkitool" --initca
+
+#./build-key-server $CommonName --batch
+"$EASY_RSA/pkitool" --server $CommonName
+
+./build-dh
+
+echo "export SrvName=\"$SrvName\"" > $ServerCfgVars
+echo "export CommonName=\"$CommonName\"" >> $ServerCfgVars
+echo "export UdpPort=\"$UdpPort\"" >> $ServerCfgVars
+echo "export VPNNetz=\"$VPNNetz\"" >> $ServerCfgVars
+echo "export NetzMaske=\"$NetzMaske\"" >> $ServerCfgVars
+
+
