@@ -10,4 +10,4 @@ mkdir keys
 cp openssl-1.0.0.cnf openssl.cnf
 
 mkdir /root/vpn_cfg
-
+mkdir /etc/openvpn/ccd
