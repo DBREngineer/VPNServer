@@ -28,3 +28,5 @@ export EASY_RSA="${EASY_RSA:-.}"
 #./build_key $ClientName
 "$EASY_RSA/pkitool" $ClientName
 
+/root/vpn_admin/make_client_config $SrvName $ClientName
+

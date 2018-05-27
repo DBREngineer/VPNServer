@@ -50,4 +50,5 @@ echo "export UdpPort=\"$UdpPort\"" >> $ServerCfgVars
 echo "export VPNNetz=\"$VPNNetz\"" >> $ServerCfgVars
 echo "export NetzMaske=\"$NetzMaske\"" >> $ServerCfgVars
 
+/root/vpn_admin/make_server_cfg $SrvName
 
