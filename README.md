@@ -7,3 +7,9 @@ wget https://raw.githubusercontent.com/DBREngineer/VPNServer/master/install.sh<b
 /root/vpn_admin/add_client_for_server TestSrv2 TestClient2<br>
 /root/vpn_admin/add_client_for_server TestSrv2 vpnrouter2<br>
 /root/vpn_admin/add_client_subnet TestSrv2 vpnrouter2 192.168.118.0 255.255.255.0<br>
+<br>
+/etc/default/openvpn<br>
+--> AUTOSTART="all" aktivieren<br>
+systemctl daemon-reload<br>
+service openvpn stop<br>
+service openvpn start<br>
