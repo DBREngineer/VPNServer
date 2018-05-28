@@ -32,6 +32,10 @@ echo "cipher AES-256-CBC" >> $ClientCfgFile
 echo "verb 3" >> $ClientCfgFile
 echo "log /var/log/openvpn-$ClientName.log" >> $ClientCfgFile
 echo "topology subnet" >> $ClientCfgFile
+echo "remote-cert-tls server" >> $ClientCfgFile
+echo "auth-nocache" >> $ClientCfgFile
+
+
 echo "<ca>" >> $ClientCfgFile
 cat  $ServerKeysDir/ca.crt >> $ClientCfgFile
 echo "</ca>" >> $ClientCfgFile
