@@ -1,5 +1,7 @@
 #!/bin/sh
-apt-get install git net-tools openvpn easy-rsa
+apt-get update
+apt-get upgrade
+apt-get install git net-tools openvpn easy-rsa git-flow mc 
 
 git clone 'https://github.com/DBREngineer/VPNServer.git' /root/vpn_admin
 
